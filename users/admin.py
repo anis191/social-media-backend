@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from users.models import User
+# from users.models import User
+from .models import User, UserProfile, UserStats, UserPrivacySettings, WorkExperience, Education
 
 class CustomUserAdmin(UserAdmin):
     model = User
@@ -29,3 +30,8 @@ class CustomUserAdmin(UserAdmin):
     ordering = ('email',)
 
 admin.site.register(User, CustomUserAdmin)
+admin.site.register(UserProfile)
+admin.site.register(UserStats)
+admin.site.register(UserPrivacySettings)
+admin.site.register(WorkExperience)
+admin.site.register(Education)

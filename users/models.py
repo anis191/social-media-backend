@@ -16,3 +16,71 @@ class User(AbstractUser):
 
     def __str__(self):
         return f"{self.email})"
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    # profile_picture and cover_photo 
+    bio = models.TextField(max_length=250,null=True, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
+    gender = models.CharField(
+        max_length=1,
+        choices=[('M','Male'),('F','Female'),('O','Other')],
+        null=True, blank=True
+    )
+    location = models.CharField(max_length=100, null=True, blank=True)
+    SINGLE = 'Single'
+    MARRIED = 'Married'
+    RELATIONSHIP = 'In a Relationship'
+    RELATIONSHIP_STATUS_CHOICES = [
+        (SINGLE, 'Single'),
+        (MARRIED, 'Married'),
+        (RELATIONSHIP, 'In a Relationship'),
+    ]
+    relationship_status = models.CharField(max_length=20, choices=RELATIONSHIP_STATUS_CHOICES, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.email} Profile"
+
+class UserStats(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_status')
+    followers = models.PositiveIntegerField(default=0)
+    following = models.PositiveIntegerField(default=0)
+    posts = models.PositiveIntegerField(default=0)
+    friends = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.user.email} Stats"
+
+class UserPrivacySettings(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='privacy_settings')
+    profile_visibility = models.CharField(
+        choices=[('PUBLIC','Public'),('PRIVATE','Private')],
+        default="PUBLIC"
+    )
+    show_email = models.BooleanField(default=True)
+    show_phone = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user.email} Privacy"
+
+class WorkExperience(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='work_experience')
+    company = models.CharField(max_length=200, null=True, blank=True)
+    position = models.CharField(max_length=100, null=True, blank=True)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.position} at {self.company}"
+
+class Education(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='education')
+    school = models.CharField(max_length=200, null=True, blank=True)
+    degree = models.CharField(max_length=100, null=True, blank=True)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.degree} at {self.school}"
