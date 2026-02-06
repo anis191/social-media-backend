@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from users.managers import CustomUserManager
+import random
+import string
+from django.utils.text import slugify
 
 # Create your models here.
 class User(AbstractUser):
@@ -18,6 +21,7 @@ class User(AbstractUser):
         return f"{self.email})"
 
 class UserProfile(models.Model):
+    slug = models.SlugField(max_length=60, unique=True, blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     # profile_picture and cover_photo 
     bio = models.TextField(max_length=250,null=True, blank=True)
@@ -39,6 +43,21 @@ class UserProfile(models.Model):
     relationship_status = models.CharField(max_length=20, choices=RELATIONSHIP_STATUS_CHOICES, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    @staticmethod
+    def generate_unique_slug(user):
+        base_name = f"{user.first_name} {user.last_name}".strip()
+        if not base_name:
+            base_name = user.email.split("@")[0]
+        
+        base_slug = slugify(base_name)
+        random_suffix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
+        return f"{base_slug}-{random_suffix}"
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self.generate_unique_slug(self.user)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user.email} Profile"
