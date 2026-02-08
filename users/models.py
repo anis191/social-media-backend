@@ -23,7 +23,8 @@ class User(AbstractUser):
 class UserProfile(models.Model):
     slug = models.SlugField(max_length=60, unique=True, blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    # profile_picture and cover_photo 
+    profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
+    cover_photo = models.ImageField(upload_to='cover_photos/', null=True, blank=True)
     bio = models.TextField(max_length=250,null=True, blank=True)
     birth_date = models.DateField(null=True, blank=True)
     gender = models.CharField(
