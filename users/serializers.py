@@ -18,4 +18,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = UserProfile
         fields = ['id','slug','profile_picture','cover_photo','user','bio','birth_date','gender','location','relationship_status','created_at']
         read_only_fields = ['slug','created_at']
- 
+
+class UserProfileListSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(source = 'user.first_name')
+    last_name = serializers.CharField(source = 'user.last_name')
+    class Meta:
+        model = UserProfile
+        fields = ['id','slug','first_name','last_name', 'profile_picture']

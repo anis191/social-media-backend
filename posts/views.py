@@ -6,9 +6,13 @@ from rest_framework.permissions import IsAuthenticated
 from .permissions import *
 
 class PostViewSet(ModelViewSet):
-    queryset = Post.objects.all()
+    # queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+    def get_queryset(self):
+        return Post.objects.filter(
+            author__profile__slug = self.kwargs.get('profile_slug')
+        )
 
     def perform_create(self, serializer):
         serializer.save(author = self.request.user)
