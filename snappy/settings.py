@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'api',
     'users',
     'posts',
+    'engagement',
     "debug_toolbar",
 ]
 
